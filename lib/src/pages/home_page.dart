@@ -1,8 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+
+import 'package:qrreaderapp/src/bloc/scans_bloc.dart';
+import 'package:qrreaderapp/src/models/scan_model.dart';
+
 import 'package:qrreaderapp/src/pages/direcciones_page.dart';
 import 'package:qrreaderapp/src/pages/mapas_page.dart';
 
-import 'package:qrcode_reader/qrcode_reader.dart';
+import 'package:qrreaderapp/src/utils/utils.dart' as utils;
+
+// import 'package:qrcode_reader/qrcode_reader.dart';
+// import 'package:qrreaderapp/src/providers/db_provider.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -11,6 +20,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  final scansBloc = new ScansBloc();
 
   int currentIndex = 0;
 
@@ -22,7 +33,7 @@ class _HomePageState extends State<HomePage> {
         actions: <Widget>[
           IconButton(
             icon: Icon( Icons.delete_forever ),
-            onPressed: (){},
+            onPressed: scansBloc.borrarScanTodos,
           )
         ],
       ),
@@ -31,29 +42,44 @@ class _HomePageState extends State<HomePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         child: Icon( Icons.filter_center_focus ),
-        onPressed: _scanQR,
+        onPressed: () => _scanQR( context ),
         backgroundColor: Theme.of(context).primaryColor,
-      )
+      ),
     );
   }
 
-  _scanQR() async {
+  _scanQR(BuildContext context ) async {
 
     // https://www.google.com
-    // geo:40.68571377944765,-73.95512953242189
+    // geo:40.71902904250759,-73.99632826289064
 
-    String futureString = '';
+    String futureString = 'https://www.google.com';
 
-    try{
-      futureString = await new QRCodeReader().scan();
-    } catch (error) {
-      futureString = error.toString();
-    }
+    // try{
+    //   futureString = await new QRCodeReader().scan();
+    // } catch (error) {
+    //   futureString = error.toString();
+    // }
 
-    print('futureString: $futureString');
+    // print('futureString: $futureString');
 
     if( futureString != null ) {
-      print('Tenemos informacion');
+      
+      final scan = ScanModel( valor: futureString );
+      scansBloc.agregarScan(scan);
+
+      final scan2 = ScanModel( valor: 'geo:40.71902904250759,-73.99632826289064' );
+      scansBloc.agregarScan(scan2);
+      // DBProvider.db.nuevoScan( scan );
+      
+      if( Platform.isIOS ){
+        Future.delayed( Duration( milliseconds: 750 ), () {
+          utils.arbriScan(context, scan);
+        });
+      } else {
+        utils.arbriScan(context, scan);
+      }
+
     }
 
   }
