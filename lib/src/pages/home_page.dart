@@ -10,7 +10,7 @@ import 'package:qrreaderapp/src/pages/mapas_page.dart';
 
 import 'package:qrreaderapp/src/utils/utils.dart' as utils;
 
-// import 'package:qrcode_reader/qrcode_reader.dart';
+import 'package:qrcode_reader/qrcode_reader.dart';
 // import 'package:qrreaderapp/src/providers/db_provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -53,13 +53,13 @@ class _HomePageState extends State<HomePage> {
     // https://www.google.com
     // geo:40.71902904250759,-73.99632826289064
 
-    String futureString = 'https://www.google.com';
+    String futureString;
 
-    // try{
-    //   futureString = await new QRCodeReader().scan();
-    // } catch (error) {
-    //   futureString = error.toString();
-    // }
+    try{
+      futureString = await new QRCodeReader().scan();
+    } catch (error) {
+      futureString = error.toString();
+    }
 
     // print('futureString: $futureString');
 
@@ -68,8 +68,8 @@ class _HomePageState extends State<HomePage> {
       final scan = ScanModel( valor: futureString );
       scansBloc.agregarScan(scan);
 
-      final scan2 = ScanModel( valor: 'geo:40.71902904250759,-73.99632826289064' );
-      scansBloc.agregarScan(scan2);
+      // final scan2 = ScanModel( valor: 'geo:40.71902904250759,-73.99632826289064' );
+      // scansBloc.agregarScan(scan2);
       // DBProvider.db.nuevoScan( scan );
       
       if( Platform.isIOS ){
@@ -122,4 +122,5 @@ class _HomePageState extends State<HomePage> {
     );
 
   }
+
 }
